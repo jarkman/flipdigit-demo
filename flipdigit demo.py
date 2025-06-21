@@ -19,20 +19,23 @@ import time
 
 import serial.rs485
 
-digits = [ 1+2+4+8+16+32, 2+4, 1+2+64+16+8, 1+2+64+4+8,32+64+2+4,1+32+64+4+8,32+64+16+4+8,1+2+4,1+2+4+8+16+32+64,1+2+4+32+64]    
-    
-def setFlaps(ser, num):
-    command = 0x89  # send one byte and show it
-    address = 0xff   # shipping default
-    data = num  # MSB is neglected, the following bits B6 – B0 are setting dots from top to bottom respectively.
-
-    # Segment layout
+# Segment layout (not obvious which way is meant to be up, I made an arbitrary choice)
 
     #     1
     # 32     2
     #     64
     # 16     4
     #     8
+
+
+digits = [ 1+2+4+8+16+32, 2+4, 1+2+64+16+8, 1+2+64+4+8,32+64+2+4,1+32+64+4+8,32+64+16+4+8,1+2+4,1+2+4+8+16+32+64,1+2+4+32+64]    
+    
+def setFlaps(ser, num):
+    command = 0x89  # send one byte and show it
+    address = 0xff   # shipping default, use their PIX_ONE tool to change a digit's address 
+    data = num  # MSB is neglected, the following bits B6 – B0 are setting dots from top to bottom respectively.
+
+    
 
 
     packet = bytearray([0x80, command, address, data, 0x8f ])
@@ -104,7 +107,7 @@ def counter(ser):
             digit = 0
 
 
-ser = serial.Serial(port='COM3', baudrate=9600, timeout=10)
+ser = serial.Serial(port='COM3', baudrate=9600, timeout=10) # 9600 is the shipping default baud rate, use their PIX_ONE tool to change it
 ser.rs485_mode= serial.rs485.RS485Settings()
 
 #looper(ser)
